@@ -398,3 +398,4 @@ FodyWeavers.xsd
 *.sln.iml
 
 /rio-logging-console-testing
+.idea
