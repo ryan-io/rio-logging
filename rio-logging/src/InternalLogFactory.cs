@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
+using Microsoft.Extensions.Logging;
 using Serilog;
+using ILogger = Serilog.ILogger;
 
 namespace riolog {
 	public static class Extensions {
@@ -7,21 +9,41 @@ namespace riolog {
 			logger.Information("Flushing logger... =====LOG END");
 			Serilog.Log.CloseAndFlush();
 		}
-		
+
 		public static async ValueTask CloseAndFlushAsync(this Serilog.ILogger logger) {
 			logger.Information("Flushing logger asynchronously...");
 			await Serilog.Log.CloseAndFlushAsync();
 			logger.Information("Logger flushed. =====LOG END");
 		}
+		
+		public static Microsoft.Extensions.Logging.ILogger AsLogger<T>(this ILogger logger) {
+			ILoggerFactory factory = new LoggerFactory().AddSerilog(Log.Logger);
+			return factory.CreateLogger<T>();
+		}
+
+		public static void CloseAndFlush(this Microsoft.Extensions.Logging.ILogger logger) {
+			Log.Logger.Information("Flushing logger... =====LOG END");
+			Serilog.Log.CloseAndFlush();
+		}
+		
+		public static async ValueTask CloseAndFlushAsync(this Microsoft.Extensions.Logging.ILogger logger) {
+			Log.Logger.Information("Flushing logger asynchronously...");
+			await Serilog.Log.CloseAndFlushAsync();
+			Log.Logger.Information("Logger flushed. =====LOG END");
+		}
 	}
-	
+
 	[Serializable, Flags]
-	public enum LogTo {
+	public enum Output {
 		None    = 0,
 		Console = 1,
 		File    = 2,
 		Debug   = 4,
 		All     = Console | File | Debug
+	}
+
+	public static class RLog  {
+		
 	}
 
 	public class InternalLogFactory {
@@ -31,10 +53,10 @@ namespace riolog {
 		///  If logPath is null or whitespace, the default log path is used.
 		///  If logToBits is LogTo.All, all logging options are enabled.
 		/// </summary>
-		/// <param name="logToBits">Flags for what logging services to use</param>
+		/// <param name="outputBits">Flags for what logging services to use</param>
 		/// <param name="logPath">Path to directory where logs should be stored</param>
-		public static ILogger SetupAndStart(LogTo logToBits, string? logPath = default) {
-			if (logToBits == LogTo.None)
+		public static ILogger SetupAndStart(Output outputBits, string? logPath = default) {
+			if (outputBits == Output.None)
 				return null!;
 
 			if (string.IsNullOrWhiteSpace(logPath))
@@ -42,31 +64,31 @@ namespace riolog {
 
 			var logConfig = new LoggerConfiguration().MinimumLevel.Debug();
 
-			if (logToBits == LogTo.All) {
+			if (outputBits == Output.All) {
 				logConfig
 				   .WriteTo.Console()
 				   .WriteTo.File(logPath, rollingInterval: RollingInterval.Day)
 				   .WriteTo.Debug();
 			}
 			else {
-				if ((logToBits & LogTo.Console) != 0)
+				if ((outputBits & Output.Console) != 0)
 					logConfig.WriteTo.Console();
-				if ((logToBits & LogTo.File) != 0)
+				if ((outputBits & Output.File) != 0)
 					logConfig.WriteTo.File(logPath, rollingInterval: RollingInterval.Day);
-				if ((logToBits & LogTo.Debug) != 0)
+				if ((outputBits & Output.Debug) != 0)
 					logConfig.WriteTo.Debug();
-			}	
-			
-			var          logger   = Log.Logger = logConfig.CreateLogger();
+			}
+
+			var logger= Log.Logger = logConfig.CreateLogger();
 
 			const string startMsg = "------ Logging started ----- ";
 			var          time     = DateTime.Now.TimeOfDay.ToString(@"hh\:mm\:ss");
-			
+
 			logger.Information($"{startMsg}" + "{Time}", time);
-			
+
 			return logger;
 		}
-
+		
 		static class LogPath {
 			public static string Get() {
 				var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
