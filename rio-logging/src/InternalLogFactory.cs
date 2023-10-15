@@ -41,11 +41,7 @@ namespace riolog {
 		Debug   = 4,
 		All     = Console | File | Debug
 	}
-
-	public static class RLog  {
-		
-	}
-
+	
 	public class InternalLogFactory {
 		/// <summary>
 		///  Start a new logger with the specified logToBits and logPath.
