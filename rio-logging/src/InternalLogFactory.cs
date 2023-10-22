@@ -15,17 +15,22 @@ namespace riolog {
 			await Serilog.Log.CloseAndFlushAsync();
 			logger.Information("Logger flushed. =====LOG END");
 		}
-		
+
 		public static Microsoft.Extensions.Logging.ILogger AsLogger<T>(this ILogger logger) {
 			ILoggerFactory factory = new LoggerFactory().AddSerilog(Log.Logger);
 			return factory.CreateLogger<T>();
+		}
+
+		public static Microsoft.Extensions.Logging.ILogger AsLogger(this ILogger logger) {
+			ILoggerFactory factory = new LoggerFactory().AddSerilog(Log.Logger);
+			return factory.CreateLogger<ILoggerFactory>();
 		}
 
 		public static void CloseAndFlush(this Microsoft.Extensions.Logging.ILogger logger) {
 			Log.Logger.Information("Flushing logger... =====LOG END");
 			Serilog.Log.CloseAndFlush();
 		}
-		
+
 		public static async ValueTask CloseAndFlushAsync(this Microsoft.Extensions.Logging.ILogger logger) {
 			Log.Logger.Information("Flushing logger asynchronously...");
 			await Serilog.Log.CloseAndFlushAsync();
@@ -41,7 +46,7 @@ namespace riolog {
 		Debug   = 4,
 		All     = Console | File | Debug
 	}
-	
+
 	public class InternalLogFactory {
 		/// <summary>
 		///  Start a new logger with the specified logToBits and logPath.
@@ -75,7 +80,7 @@ namespace riolog {
 					logConfig.WriteTo.Debug();
 			}
 
-			var logger= Log.Logger = logConfig.CreateLogger();
+			var logger = Log.Logger = logConfig.CreateLogger();
 
 			const string startMsg = "------ Logging started ----- ";
 			var          time     = DateTime.Now.TimeOfDay.ToString(@"hh\:mm\:ss");
@@ -84,7 +89,10 @@ namespace riolog {
 
 			return logger;
 		}
-		
+
+		public static Microsoft.Extensions.Logging.ILogger SetupAndStartAsLogger(Output outputBits,
+			string? logPath = default) => SetupAndStart(outputBits, logPath).AsLogger();
+
 		static class LogPath {
 			public static string Get() {
 				var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
