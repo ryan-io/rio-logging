@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
 using ILogger = Serilog.ILogger;
 
 namespace riolog {
@@ -67,13 +68,13 @@ namespace riolog {
 
 			if (outputBits == Output.All) {
 				logConfig
-				   .WriteTo.Console()
+				   .WriteTo.Console(theme: Theme)
 				   .WriteTo.File(logPath, rollingInterval: RollingInterval.Day)
 				   .WriteTo.Debug();
 			}
 			else {
 				if ((outputBits & Output.Console) != 0)
-					logConfig.WriteTo.Console();
+					logConfig.WriteTo.Console(theme: Theme);
 				if ((outputBits & Output.File) != 0)
 					logConfig.WriteTo.File(logPath, rollingInterval: RollingInterval.Day);
 				if ((outputBits & Output.Debug) != 0)
@@ -100,5 +101,7 @@ namespace riolog {
 				return path;
 			}
 		}
+		
+		static readonly ConsoleTheme Theme = SeriLogThemesLibrary.SeriLogCustomThemes.Theme3();
 	}
 }
