@@ -5,6 +5,9 @@
         <RootNamespace>rio_logging</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>RIO Logging</Title>
+        <Description>A simple Serilog wrapper</Description>
     </PropertyGroup>
 
     <ItemGroup>
@@ -15,5 +18,4 @@
       <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00968" />
       <PackageReference Include="SeriLogThemesLibrary" Version="1.0.0.1" />
     </ItemGroup>
-
 </Project>

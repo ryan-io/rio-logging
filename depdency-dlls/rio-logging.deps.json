@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v7.0": {
       "rio-logging/1.0.0": {
         "dependencies": {
+          "SeriLogThemesLibrary": "1.0.0.1",
           "Serilog": "3.1.0-dev-02078",
           "Serilog.Extensions.Logging": "7.0.1-dev-10354",
           "Serilog.Sinks.Console": "5.0.0-dev-00923",
@@ -131,6 +132,17 @@
             "fileVersion": "5.0.1.0"
           }
         }
+      },
+      "SeriLogThemesLibrary/1.0.0.1": {
+        "dependencies": {
+          "Serilog.Sinks.Console": "5.0.0-dev-00923"
+        },
+        "runtime": {
+          "lib/net7.0/SeriLogThemesLibrary.dll": {
+            "assemblyVersion": "1.0.0.1",
+            "fileVersion": "1.0.0.1"
+          }
+        }
       }
     }
   },
@@ -216,6 +228,13 @@
       "sha512": "sha512-139kP+WeSXgyeQmudHu/vOCj1pWKlOLkHtdEfhisoPAGCNhIe8TAjweMpL9iuF+X40flA84w0Oaa4jhzXiM83w==",
       "path": "serilog.sinks.file/5.0.1-dev-00968",
       "hashPath": "serilog.sinks.file.5.0.1-dev-00968.nupkg.sha512"
+    },
+    "SeriLogThemesLibrary/1.0.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-t63MfyyAIc5kOo0vZsddXCyJ7OTFpwTV7cwyjd/eG4hYFDiJFLWBTe3zx4cS8QjnAVQoAog1kPfnEnbJmDptpg==",
+      "path": "serilogthemeslibrary/1.0.0.1",
+      "hashPath": "serilogthemeslibrary.1.0.0.1.nupkg.sha512"
     }
   }
 }
